@@ -1,7 +1,8 @@
 import React from "react";
+import Products from "./sections";
 
 function App() {
-  return <h1>Hello W</h1>;
+  return <Products />;
 }
 
 export default App;
