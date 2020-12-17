@@ -1,5 +1,6 @@
 import React from "react";
 import { server } from "../../lib/api";
+import { ProductsData } from "./types";
 
 const PRODUCTS = `
   query Products{
@@ -17,9 +18,9 @@ const PRODUCTS = `
 
 const Products: React.FC = () => {
   const fetchData = async () => {
-    const products = await server.fetch({ query: PRODUCTS });
+    const { data } = await server.fetch<ProductsData>({ query: PRODUCTS });
 
-    console.log(products);
+    console.log(data.products);
   };
   return (
     <>

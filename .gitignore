@@ -5,3 +5,6 @@ build/
 
 .env
 yarn.lock
+.eslintcache
+.cache
+package-lock.json
