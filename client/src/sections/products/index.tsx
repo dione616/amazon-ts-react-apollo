@@ -1,9 +1,10 @@
-import React from "react";
-import { server } from "../../lib/api";
+import React, { useEffect, useState } from "react";
+import { server, useQuery } from "../../lib/api";
 import {
   ProductsData,
   DeleteProductData,
   DeleteProductVariables,
+  Product,
 } from "./types";
 
 const PRODUCTS = `
@@ -30,30 +31,36 @@ const DELETE_PRODUCT = `
 `;
 
 const Products: React.FC = () => {
-  const fetchData = async () => {
-    const { data } = await server.fetch<ProductsData>({ query: PRODUCTS });
+  const { data } = useQuery<ProductsData>(PRODUCTS);
+  console.log(`data: ${data?.products[0]}`);
 
-    console.log(data.products);
-  };
-
-  const deleteProduct = async () => {
-    const { data } = await server.fetch<
-      DeleteProductData,
-      DeleteProductVariables
-    >({
+  const deleteProduct = async (id: string) => {
+    server.fetch<DeleteProductData, DeleteProductVariables>({
       query: DELETE_PRODUCT,
       variables: {
-        id: "5fda00747de4062470f5d3dc",
+        id,
       },
     });
-
-    console.log(data);
+    /* fetchData(); */
   };
+
+  const products = data ? data.products : null;
+
+  const productsList = products
+    ? products.map((product) => {
+        return (
+          <li key={product.id}>
+            {product.title} <img height="30px" src={product.image} alt="img" />
+            <button onClick={() => deleteProduct(product.id)}>Delete</button>
+          </li>
+        );
+      })
+    : null;
   return (
     <>
       <h1>Products</h1>
-      <button onClick={fetchData}>Query Products</button>
-      <button onClick={deleteProduct}>Delete Products</button>
+      <ul>{productsList}</ul>
+      {/* <button onClick={fetchData}>Query Products</button> */}
     </>
   );
 };
