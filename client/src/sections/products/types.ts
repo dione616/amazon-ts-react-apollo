@@ -10,3 +10,9 @@ export interface Product {
 export interface ProductsData {
   products: Product[];
 }
+export interface DeleteProductData {
+  deleteProduct: Product;
+}
+export interface DeleteProductVariables {
+  id: string;
+}
