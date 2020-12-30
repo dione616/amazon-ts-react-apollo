@@ -31,7 +31,7 @@ const DELETE_PRODUCT = `
 `;
 
 const Products: React.FC = () => {
-  const { data, refetch } = useQuery<ProductsData>(PRODUCTS);
+  const { data, loading, error, refetch } = useQuery<ProductsData>(PRODUCTS);
   console.log(`data: ${data?.products[0]}`);
 
   const deleteProduct = async (id: string) => {
@@ -57,6 +57,13 @@ const Products: React.FC = () => {
         );
       })
     : null;
+
+  if (loading) {
+    return <h2>Loading...</h2>;
+  }
+  if (error) {
+    return <h2>Error</h2>;
+  }
   return (
     <>
       <h1>Products</h1>
