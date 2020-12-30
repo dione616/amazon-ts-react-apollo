@@ -31,7 +31,7 @@ const DELETE_PRODUCT = `
 `;
 
 const Products: React.FC = () => {
-  const { data } = useQuery<ProductsData>(PRODUCTS);
+  const { data, refetch } = useQuery<ProductsData>(PRODUCTS);
   console.log(`data: ${data?.products[0]}`);
 
   const deleteProduct = async (id: string) => {
@@ -42,6 +42,7 @@ const Products: React.FC = () => {
       },
     });
     /* fetchData(); */
+    refetch();
   };
 
   const products = data ? data.products : null;
