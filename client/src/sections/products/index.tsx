@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { server, useQuery } from "../../lib/api";
 import {
   ProductsData,
   DeleteProductData,
   DeleteProductVariables,
-  Product,
 } from "./types";
 
 const PRODUCTS = `
@@ -68,7 +67,6 @@ const Products: React.FC = () => {
     <>
       <h1>Products</h1>
       <ul>{productsList}</ul>
-      {/* <button onClick={fetchData}>Query Products</button> */}
     </>
   );
 };

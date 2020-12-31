@@ -10,6 +10,7 @@
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
+    "@typescript-eslint/parser": "^4.11.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.1",
@@ -20,7 +21,22 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "type-check": "tsc --pretty --noEmit",
+    "format": "prettier --write \"**/*.{js,ts,tsx}\"",
+    "lint": "eslint . --ext ts --ext tsx --ext js"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "yarn run type-check"
+    }
+  },
+  "lint-staged": {
+    "*.@(ts|tsx)": [
+      "yarn lint",
+      "yarn format"
+    ]
   },
   "eslintConfig": {
     "extends": [
@@ -40,5 +56,13 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:9000"
+  "proxy": "http://localhost:9000",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.11.1",
+    "eslint": "^7.16.0",
+    "eslint-plugin-react": "^7.22.0",
+    "husky": "^4.3.6",
+    "lint-staged": "^10.5.3",
+    "prettier": "^2.2.1"
+  }
 }
