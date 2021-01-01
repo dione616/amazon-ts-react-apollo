@@ -1,14 +1,15 @@
+import { gql } from "apollo-boost";
 import React from "react";
-import { useQuery, useMutation } from "../../lib/api";
+import { useQuery, useMutation } from "react-apollo";
+import { Products as ProductsData } from "./__generated__/Products";
 import {
-  ProductsData,
-  DeleteProductData,
+  DeleteProduct as DeleteProductData,
   DeleteProductVariables,
-} from "./types";
+} from "./__generated__/DeleteProduct";
 
-const PRODUCTS = `
-  query Products{
-    products{
+const PRODUCTS = gql`
+  query Products {
+    products {
       id
       title
       description
@@ -20,9 +21,9 @@ const PRODUCTS = `
   }
 `;
 
-const DELETE_PRODUCT = `
-  mutation DeleteProduct($id:ID!){
-    deleteProduct(id:$id){
+const DELETE_PRODUCT = gql`
+  mutation DeleteProduct($id: ID!) {
+    deleteProduct(id: $id) {
       id
       title
     }
@@ -39,7 +40,7 @@ const Products: React.FC = () => {
   ] = useMutation<DeleteProductData, DeleteProductVariables>(DELETE_PRODUCT);
 
   const handleDeleteProduct = async (id: string) => {
-    await deleteProduct({ id });
+    await deleteProduct({ variables: { id } });
 
     refetch();
   };

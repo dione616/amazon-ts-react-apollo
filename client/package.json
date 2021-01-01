@@ -11,7 +11,10 @@
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
     "@typescript-eslint/parser": "^4.11.1",
+    "apollo-boost": "^0.4.9",
+    "graphql": "^15.4.0",
     "react": "^17.0.1",
+    "react-apollo": "^3.1.5",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.1",
     "typescript": "^4.0.3",
@@ -24,7 +27,9 @@
     "eject": "react-scripts eject",
     "type-check": "tsc --pretty --noEmit",
     "format": "prettier --write \"**/*.{js,ts,tsx}\"",
-    "lint": "eslint . --ext ts --ext tsx --ext js"
+    "lint": "eslint . --ext ts --ext tsx --ext js",
+    "codegen:schema": "npx apollo client:download-schema --endpoint=http://localhost:9000/api",
+    "codegen:generate": "npx apollo client:codegen --localSchemaFile=schema.json --includes=src/**/*.tsx --target=typescript"
   },
   "husky": {
     "hooks": {
@@ -58,6 +63,7 @@
   },
   "proxy": "http://localhost:9000",
   "devDependencies": {
+    "@types/graphql": "^14.5.0",
     "@typescript-eslint/eslint-plugin": "^4.11.1",
     "eslint": "^7.16.0",
     "eslint-plugin-react": "^7.22.0",
