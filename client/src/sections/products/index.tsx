@@ -1,11 +1,11 @@
 import { gql } from "apollo-boost";
 import React from "react";
 import { useQuery, useMutation } from "react-apollo";
+import { Products as ProductsData } from "./__generated__/Products";
 import {
-  ProductsData,
-  DeleteProductData,
+  DeleteProduct as DeleteProductData,
   DeleteProductVariables,
-} from "./types";
+} from "./__generated__/DeleteProduct";
 
 const PRODUCTS = gql`
   query Products {
