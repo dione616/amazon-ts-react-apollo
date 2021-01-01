@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { server, useQuery } from "../../lib/api";
+import { gql } from "apollo-boost";
+import React from "react";
+import { useQuery, useMutation } from "react-apollo";
+import { Products as ProductsData } from "./__generated__/Products";
 import {
-  ProductsData,
-  DeleteProductData,
+  DeleteProduct as DeleteProductData,
   DeleteProductVariables,
-  Product,
-} from "./types";
+} from "./__generated__/DeleteProduct";
 
-const PRODUCTS = `
-  query Products{
-    products{
+const PRODUCTS = gql`
+  query Products {
+    products {
       id
       title
       description
@@ -21,9 +21,9 @@ const PRODUCTS = `
   }
 `;
 
-const DELETE_PRODUCT = `
-  mutation DeleteProduct($id:ID!){
-    deleteProduct(id:$id){
+const DELETE_PRODUCT = gql`
+  mutation DeleteProduct($id: ID!) {
+    deleteProduct(id: $id) {
       id
       title
     }
@@ -31,17 +31,18 @@ const DELETE_PRODUCT = `
 `;
 
 const Products: React.FC = () => {
-  const { data } = useQuery<ProductsData>(PRODUCTS);
+  const { data, loading, error, refetch } = useQuery<ProductsData>(PRODUCTS);
   console.log(`data: ${data?.products[0]}`);
 
-  const deleteProduct = async (id: string) => {
-    server.fetch<DeleteProductData, DeleteProductVariables>({
-      query: DELETE_PRODUCT,
-      variables: {
-        id,
-      },
-    });
-    /* fetchData(); */
+  const [
+    deleteProduct,
+    { loading: deleteProductLoading, error: deleteProductError },
+  ] = useMutation<DeleteProductData, DeleteProductVariables>(DELETE_PRODUCT);
+
+  const handleDeleteProduct = async (id: string) => {
+    await deleteProduct({ variables: { id } });
+
+    refetch();
   };
 
   const products = data ? data.products : null;
@@ -51,16 +52,35 @@ const Products: React.FC = () => {
         return (
           <li key={product.id}>
             {product.title} <img height="30px" src={product.image} alt="img" />
-            <button onClick={() => deleteProduct(product.id)}>Delete</button>
+            <button onClick={() => handleDeleteProduct(product.id)}>
+              Delete
+            </button>
           </li>
         );
       })
     : null;
+
+  const deleteProductLoadingMessage = deleteProductLoading && (
+    <h2>Deleting in progress ...</h2>
+  );
+
+  if (loading) {
+    return <h2>Loading...</h2>;
+  }
+  if (error) {
+    return <h2>Error</h2>;
+  }
+
+  const deleteProductErrorMessage = deleteProductError && (
+    <h2>Deleting failed!</h2>
+  );
+
   return (
     <>
       <h1>Products</h1>
       <ul>{productsList}</ul>
-      {/* <button onClick={fetchData}>Query Products</button> */}
+      {deleteProductLoadingMessage}
+      {deleteProductErrorMessage}
     </>
   );
 };
