@@ -1,11 +1,14 @@
 import { gql } from "apollo-boost";
 import React from "react";
 import { useQuery, useMutation } from "react-apollo";
+import { Alert, Avatar, Button, List, Spin } from "antd";
 import { Products as ProductsData } from "./__generated__/Products";
 import {
   DeleteProduct as DeleteProductData,
   DeleteProductVariables,
 } from "./__generated__/DeleteProduct";
+import "./styles/index.css";
+import ProductsSkeleton from "./components/ProductsSkeleton";
 
 const PRODUCTS = gql`
   query Products {
@@ -47,41 +50,68 @@ const Products: React.FC = () => {
 
   const products = data ? data.products : null;
 
-  const productsList = products
-    ? products.map((product) => {
-        return (
-          <li key={product.id}>
-            {product.title} <img height="30px" src={product.image} alt="img" />
-            <button onClick={() => handleDeleteProduct(product.id)}>
-              Delete
-            </button>
-          </li>
-        );
-      })
-    : null;
-
   const deleteProductLoadingMessage = deleteProductLoading && (
     <h2>Deleting in progress ...</h2>
   );
 
+  const productsList = products && (
+    <List
+      itemLayout="horizontal"
+      dataSource={products}
+      renderItem={(product) => {
+        return (
+          <List.Item
+            key={product.id}
+            actions={[
+              <Button
+                key={product.id}
+                onClick={() => handleDeleteProduct(product.id)}
+                type="primary"
+              >
+                Delete
+              </Button>,
+            ]}
+          >
+            <List.Item.Meta
+              title={product.title}
+              description={product.description}
+              avatar={<Avatar src={product.image} shape="square" size={48} />}
+            />
+          </List.Item>
+        );
+      }}
+    />
+  );
+
   if (loading) {
-    return <h2>Loading...</h2>;
-  }
-  if (error) {
-    return <h2>Error</h2>;
+    return (
+      <div className="products">
+        <ProductsSkeleton title="Products" />
+      </div>
+    );
   }
 
-  const deleteProductErrorMessage = deleteProductError && (
-    <h2>Deleting failed!</h2>
+  if (error) {
+    return (
+      <div className="products">
+        <ProductsSkeleton title="Products" error />
+      </div>
+    );
+  }
+
+  const deleteProductErrorAlert = deleteProductError && (
+    <Alert type="error" message="Something went wrong !!!" />
   );
 
   return (
-    <>
-      <h1>Products</h1>
-      <ul>{productsList}</ul>
-      {deleteProductLoadingMessage}
-      {deleteProductErrorMessage}
-    </>
+    <div className="products">
+      {deleteProductErrorAlert}
+      <Spin spinning={deleteProductLoading}>
+        <h1>Products</h1>
+        <ul>{productsList}</ul>
+        {deleteProductLoadingMessage}
+      </Spin>
+    </div>
   );
 };
 
