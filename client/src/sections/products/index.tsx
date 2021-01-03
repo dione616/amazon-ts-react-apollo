@@ -33,7 +33,7 @@ const DELETE_PRODUCT = gql`
   }
 `;
 
-const Products: React.FC = () => {
+export const Products: React.FC = () => {
   const { data, loading, error, refetch } = useQuery<ProductsData>(PRODUCTS);
   console.log(`data: ${data?.products[0]}`);
 
@@ -114,5 +114,3 @@ const Products: React.FC = () => {
     </div>
   );
 };
-
-export default Products;
