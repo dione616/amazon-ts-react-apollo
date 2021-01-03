@@ -19,7 +19,6 @@ export interface Product {
   rating: number;
   quantity: number;
   quality: ProductQualityType;
-  host: string;
   category: ObjectId;
   address: string;
   country: string;
