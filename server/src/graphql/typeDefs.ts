@@ -12,10 +12,13 @@ export const typeDefs = gql`
   }
 
   type Query {
+    authUrl: String!
     products: [Product!]!
   }
 
   type Mutation {
+    logIn: String!
+    logOut: String!
     deleteProduct(id: ID!): Product!
   }
 `;
