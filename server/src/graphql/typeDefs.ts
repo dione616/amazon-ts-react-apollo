@@ -9,6 +9,14 @@ export const typeDefs = gql`
     didRequest: Boolean!
   }
 
+  type User1 {
+    _id: ID!
+    username: String!
+    email: String!
+    created: String!
+    token: String!
+  }
+
   type Product {
     id: ID!
     title: String!
@@ -19,18 +27,27 @@ export const typeDefs = gql`
     seller: String!
   }
 
+  input LogInInput {
+    code: String!
+  }
+
+  input UserInput {
+    username: String!
+    password: String!
+    confirmPassword: String!
+    email: String!
+  }
+
   type Query {
     authUrl: String!
     products: [Product!]!
-  }
-
-  input LogInInput {
-    code: String!
   }
 
   type Mutation {
     logIn(input: LogInInput): Viewer!
     logOut: Viewer!
     deleteProduct(id: ID!): Product!
+    LoginUser(email: String!, password: String!): User1!
+    RegisterUser(user: UserInput!): User1!
   }
 `;

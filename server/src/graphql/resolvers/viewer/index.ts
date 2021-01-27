@@ -36,9 +36,7 @@ const logInViaGoogle = async (
     userPhotosList && userPhotosList[0].url ? userPhotosList[0].url : null;
 
   const userEmail =
-    userEmailsList && userEmailsList[0].value
-      ? userEmailsList[0].value
-      : undefined;
+    userEmailsList && userEmailsList[0].value ? userEmailsList[0].value : "";
 
   if (!userId || !userName || !userAvatar || userEmail) {
     throw new Error("Google login error");
