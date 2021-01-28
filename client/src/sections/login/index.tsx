@@ -1,8 +1,7 @@
 import React, { useEffect /* , useRef */, useRef } from "react";
 import { Redirect } from "react-router-dom";
 import { useApolloClient, useMutation } from "@apollo/react-hooks";
-import { Card, Layout, Typography } from "antd";
-/* import { ErrorBanner } from "../../lib/components"; */
+import { Card, Layout, Spin, Typography } from "antd";
 import { LOG_IN } from "../../lib/graphql/mutations/login";
 import { AUTH_URL } from "../../lib/graphql/queries/authUrl";
 import {
@@ -10,8 +9,12 @@ import {
   LogInVariables,
 } from "../../lib/graphql/mutations/login/__generated__/LogIn";
 import { AuthUrl as AuthUrlData } from "../../lib/graphql/queries/authUrl/__generated__/AuthUrl";
-/* import { displaySuccessNotification, displayErrorMessage } from "../../lib/utils"; */
 import { Viewer } from "../../lib/types";
+import {
+  displaySuccessNotification,
+  displayErrorMessage,
+} from "../../lib/components/utils/index";
+import { ErrorBanner } from "../../lib/components/errorBanner";
 
 interface Props {
   setViewer: (value: React.SetStateAction<Viewer>) => void;
@@ -28,13 +31,14 @@ export const Login = ({ setViewer, viewer }: Props) => {
   const client = useApolloClient();
   const [
     logIn,
-    { data: LogInData /* , loading: logInLoading, error: logInError */ },
+    { data: LogInData, loading: logInLoading, error: logInError },
   ] = useMutation<LogInData, LogInVariables>(LOG_IN, {
     onCompleted: (data) => {
       if (data && data.logIn && data.logIn.token) {
         setViewer(data.logIn);
-        /* sessionStorage.setItem("token", data.logIn.token)
-          displaySuccessNotification("You have successfully logged in!") */
+        /* sessionStorage.setItem("token", data.logIn.token) */
+
+        displaySuccessNotification("You have successfully logged in!");
       }
     },
   });
@@ -59,7 +63,9 @@ export const Login = ({ setViewer, viewer }: Props) => {
       });
       window.location.href = data.authUrl;
     } catch (error) {
-      /* displayErrorMessage("Sorry. Wawern't able to log you in. Please try  again later!") */
+      displayErrorMessage(
+        "Sorry. Wawern't able to log you in. Please try  again later!"
+      );
     }
   };
 
@@ -68,13 +74,21 @@ export const Login = ({ setViewer, viewer }: Props) => {
     return <Redirect to={`/user/${viewerId}`} />;
   }
 
-  /* const logInErrorBannerElement = logInError ? (
+  if (logInLoading) {
+    return (
+      <Content>
+        <Spin size="large" tip="Logging in ..." />
+      </Content>
+    );
+  }
+
+  const logInErrorBannerElement = logInError ? (
     <ErrorBanner description="Sorry! We weren't able to log you in. Please try again later!" />
-  ) : null; */
+  ) : null;
 
   return (
     <Content className="log-in">
-      {/*  {logInErrorBannerElement} */}
+      {logInErrorBannerElement}
       <Card className="log-in-card">
         <div className="log-in-card__intro">
           <Title level={3} className="log-in-card__intro-title">
