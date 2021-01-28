@@ -1,1 +1,43 @@
 @import "~antd/dist/antd.css";
+#app {
+  min-height: 100vh;
+}
+
+.log-in {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+}
+.log-in-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  background: white;
+  padding: 20px;
+}
+
+.log-in-card-emoji {
+  font-size: 25px;
+}
+
+.log-in-card__google-button {
+  display: flex;
+  align-items: center;
+  padding-left: 1px;
+  max-width: 160px;
+
+  background: rgb(0, 102, 255);
+  border: none;
+
+  border-radius: 3px;
+  color: white;
+  cursor: pointer;
+  margin: 20px 0px;
+}
+.log-in-card__google-button-logo {
+  width: 32px;
+  height: 32px;
+  background: white;
+}

@@ -9,60 +9,80 @@ const logInViaGoogle = async (
   code: string,
   token: string,
   db: Database
-): Promise<User> => {
+): Promise<User | undefined> => {
   const { user } = await Google.logIn(code);
 
-  if (!user) {
+  /* if (!user) {
     throw new Error("Google login error");
-  }
+  } */
 
-  //Name photo and email
-  const userNamesList = user.names && user.names.length ? user.names : null;
-  const userPhotosList = user.photos && user.photos.length ? user.photos : null;
+  // Name/Photo/Email Lists
+  const userNamesList: any = user.names && user.names.length ? user.names : "";
+  const userPhotosList = user.photos && user.photos.length ? user.photos : "";
   const userEmailsList =
     user.emailAddresses && user.emailAddresses.length
       ? user.emailAddresses
-      : null;
+      : "";
 
-  const userName = userNamesList ? userNamesList[0].displayName : null;
+  // User Display Name
+  const userName = userNamesList[0].displayName;
+
+  // User Id
   const userId =
     userNamesList &&
     userNamesList[0].metadata &&
     userNamesList[0].metadata.source
       ? userNamesList[0].metadata.source.id
-      : null;
+      : "";
 
+  // User Avatar
   const userAvatar =
-    userPhotosList && userPhotosList[0].url ? userPhotosList[0].url : null;
+    userPhotosList && userPhotosList[0].url ? userPhotosList[0].url : "";
 
+  // User Email
   const userEmail =
     userEmailsList && userEmailsList[0].value ? userEmailsList[0].value : "";
 
-  if (!userId || !userName || !userAvatar || userEmail) {
+  /* if (!userId || !userName || !userAvatar || !userEmail) {
     throw new Error("Google login error");
+  } */
+  let viewer;
+  try {
+    const updateRes = await db.users.findOneAndUpdate(
+      { _id: userId },
+      {
+        $set: {
+          name: userName,
+          avatar: userAvatar,
+          contact: userEmail,
+          token,
+        },
+      },
+      { returnOriginal: false }
+    );
+
+    viewer = updateRes.value;
+  } catch (error) {
+    console.log("MONGOERROR", error);
   }
 
-  const updateRes = await db.users.findOneAndUpdate(
-    { _id: new ObjectId(userId) },
-    { $set: { name: userName, avatar: userAvatar, contact: userEmail, token } },
-    { returnOriginal: false }
-  );
+  try {
+    if (!viewer) {
+      const insertResult = await db.users.insertOne({
+        _id: userId,
+        token,
+        name: userName,
+        avatar: userAvatar,
+        contact: userEmail,
+        income: 0,
+        orders: [],
+        products: [],
+      });
 
-  let viewer = updateRes.value;
-
-  if (!viewer) {
-    const insertResult = await db.users.insertOne({
-      _id: new ObjectId(userId),
-      token,
-      name: userName,
-      avatar: userAvatar,
-      contact: userEmail,
-      income: 0,
-      orders: [],
-      products: [],
-    });
-
-    viewer = insertResult.ops[0];
+      viewer = insertResult.ops[0];
+    }
+  } catch (error) {
+    console.log("MONGOERROR 2", error);
   }
 
   return viewer;
@@ -84,28 +104,27 @@ export const viewerResolvers: IResolvers = {
       { input }: LogInArgs,
       { db }: { db: Database }
     ): Promise<Viewer> => {
-      try {
-        const code = input ? input.code : null;
-        const token = crypto.randomBytes(16).toString("hex");
+      const code = input ? input.code : null;
+      const token = crypto.randomBytes(16).toString("hex");
 
-        const viewer: User | undefined = code
-          ? await logInViaGoogle(code, token, db)
-          : undefined;
+      const viewer: User | undefined = code
+        ? await logInViaGoogle(code, token, db)
+        : undefined;
 
-        if (!viewer) {
-          return { didRequest: true };
-        }
-
-        return {
-          _id: viewer._id.toString(),
-          token: viewer.token,
-          avatar: viewer.avatar,
-          walletId: viewer.walletId,
-          didRequest: true,
-        };
-      } catch (error) {
-        throw new Error(`Failed to log in:${error}`);
+      if (!viewer) {
+        return { didRequest: true };
       }
+
+      const newViewer = {
+        _id: viewer._id.toString(),
+        token: viewer.token,
+        avatar: viewer.avatar,
+        walletId: viewer.walletId,
+        didRequest: true,
+      };
+      console.log(newViewer);
+
+      return newViewer;
     },
     logOut: (): Viewer => {
       try {
