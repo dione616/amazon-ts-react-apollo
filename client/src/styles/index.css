@@ -3,6 +3,12 @@
   min-height: 100vh;
 }
 
+.app-header {
+  display: flex;
+  background: white;
+  justify-content: space-between;
+}
+
 .log-in {
   display: flex;
   align-items: center;
