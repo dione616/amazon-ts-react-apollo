@@ -1,6 +1,9 @@
 {
   "dependencies": {
+    "@ant-design/icons": "^4.4.0",
     "@types/react-router-dom": "^5.1.7",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^8.5.1",
     "react-router-dom": "^5.2.0"
   }
 }

@@ -38,11 +38,17 @@ export interface User {
   token: string;
   name: string;
   avatar: string;
-  contact?: string;
+  contact: string;
   walletId?: string;
   income: number;
   orders: ObjectId[];
   products: ObjectId[];
+}
+export interface User1 {
+  _id: ObjectId;
+  username: String;
+  token: String;
+  email: String;
 }
 
 //TODO: add date when sent and date when recieve product
